@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SubscriptionTracker.Web/SubscriptionTracker.Web.csproj" />
+  </Folder>
+</Solution>
