@@ -22,11 +22,22 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
         builder.Entity<Category>(entity =>
         {
-            entity.Property(c => c.Name)
-                  .IsRequired()
-                  .HasMaxLength(50);
+           entity.Property(c => c.Name)
+                 .IsRequired()
+                 .HasMaxLength(50);
 
-            entity.HasIndex(c => c.Name).IsUnique();
+           entity.HasIndex(c => c.Name).IsUnique();
+
+           entity.HasData(
+               new Category { Id = 1, Name = "Eğlence" },
+               new Category { Id = 2, Name = "Müzik" },
+               new Category { Id = 3, Name = "Yazılım ve Yapay Zeka" },
+               new Category { Id = 4, Name = "Bulut ve Depolama" },
+               new Category { Id = 5, Name = "Faturalar" },
+               new Category { Id = 6, Name = "Spor ve Sağlık" },
+               new Category { Id = 7, Name = "Eğitim" },
+               new Category { Id = 8, Name = "Diğer" }
+            );
         });
 
         builder.Entity<Subscription>(entity =>
