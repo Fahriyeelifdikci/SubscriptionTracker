@@ -1,0 +1,61 @@
+@using System.Globalization
+@model IEnumerable<SubscriptionListItemViewModel>
+
+@{
+    ViewData["Title"] = "Aboneliklerim";
+    var tr = CultureInfo.GetCultureInfo("tr-TR");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Aboneliklerim</h1>
+    <a asp-action="Create" class="btn btn-primary">Yeni Abonelik</a>
+</div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz bir aboneliğin yok. "Yeni Abonelik" ile ilkini ekleyebilirsin.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th>Kategori</th>
+                    <th class="text-end">Ücret</th>
+                    <th>Periyot</th>
+                    <th>Sonraki Ödeme</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.CategoryName</td>
+                        <td class="text-end">@item.Price.ToString("N2", tr) ₺</td>
+                        <td>@Html.DisplayFor(_ => item.BillingPeriod)</td>
+                        <td>@item.NextPaymentDate.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Pasif</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
