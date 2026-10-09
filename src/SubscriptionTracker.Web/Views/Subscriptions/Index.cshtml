@@ -32,6 +32,7 @@ else
                     <th>Periyot</th>
                     <th>Sonraki Ödeme</th>
                     <th>Durum</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +53,10 @@ else
                             {
                                 <span class="badge bg-secondary">Pasif</span>
                             }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Detay</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
                         </td>
                     </tr>
                 }

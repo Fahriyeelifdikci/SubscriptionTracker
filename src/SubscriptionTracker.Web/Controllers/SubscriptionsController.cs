@@ -43,6 +43,32 @@ public class SubscriptionsController : Controller
         return View(subscriptions);
     }
 
+    public async Task<IActionResult> Details(int id)
+    {
+        var userId = CurrentUserId;
+
+        var model = await _context.Subscriptions
+            .Where(s => s.Id == id && s.UserId == userId)
+            .Select(s => new SubscriptionDetailsViewModel
+            {
+                Id = s.Id,
+                Name = s.Name,
+                CategoryName = s.Category.Name,
+                Price = s.Price,
+                BillingPeriod = s.BillingPeriod,
+                StartDate = s.StartDate,
+                NextPaymentDate = s.NextPaymentDate,
+                IsActive = s.IsActive,
+                Description = s.Description
+            })
+            .FirstOrDefaultAsync();
+
+        if (model is null)
+            return NotFound();
+
+        return View(model);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Create()
     {
@@ -62,10 +88,7 @@ public class SubscriptionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SubscriptionFormViewModel model)
     {
-        if (ModelState.IsValid && !await _context.Categories.AnyAsync(c => c.Id == model.CategoryId))
-        {
-            ModelState.AddModelError(nameof(model.CategoryId), "Geçersiz kategori.");
-        }
+        await ValidateCategoryAsync(model);
 
         if (!ModelState.IsValid)
         {
@@ -73,24 +96,88 @@ public class SubscriptionsController : Controller
             return View(model);
         }
 
-        var subscription = new Subscription
-        {
-            Name = model.Name.Trim(),
-            CategoryId = model.CategoryId,
-            Price = model.Price,
-            BillingPeriod = model.BillingPeriod,
-            StartDate = model.StartDate,
-            NextPaymentDate = model.NextPaymentDate,
-            IsActive = model.IsActive,
-            Description = model.Description?.Trim(),
-            UserId = CurrentUserId
-        };
+        var subscription = new Subscription { UserId = CurrentUserId };
+        ApplyForm(subscription, model);
 
         _context.Subscriptions.Add(subscription);
         await _context.SaveChangesAsync();
 
         TempData["SuccessMessage"] = "Abonelik başarıyla eklendi.";
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var subscription = await FindOwnedAsync(id);
+        if (subscription is null)
+            return NotFound();
+
+        var model = new SubscriptionFormViewModel
+        {
+            Name = subscription.Name,
+            CategoryId = subscription.CategoryId,
+            Price = subscription.Price,
+            BillingPeriod = subscription.BillingPeriod,
+            StartDate = subscription.StartDate,
+            NextPaymentDate = subscription.NextPaymentDate,
+            IsActive = subscription.IsActive,
+            Description = subscription.Description
+        };
+
+        await PopulateCategoriesAsync(model);
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, SubscriptionFormViewModel model)
+    {
+        var subscription = await FindOwnedAsync(id);
+        if (subscription is null)
+            return NotFound();
+
+        await ValidateCategoryAsync(model);
+
+        if (!ModelState.IsValid)
+        {
+            await PopulateCategoriesAsync(model);
+            return View(model);
+        }
+
+        ApplyForm(subscription, model);
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Abonelik güncellendi.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<Subscription?> FindOwnedAsync(int id)
+    {
+        var userId = CurrentUserId;
+
+        return await _context.Subscriptions
+            .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
+    }
+
+    private async Task ValidateCategoryAsync(SubscriptionFormViewModel model)
+    {
+        if (ModelState.IsValid && !await _context.Categories.AnyAsync(c => c.Id == model.CategoryId))
+        {
+            ModelState.AddModelError(nameof(model.CategoryId), "Geçersiz kategori.");
+        }
+    }
+
+    private static void ApplyForm(Subscription subscription, SubscriptionFormViewModel model)
+    {
+        subscription.Name = model.Name.Trim();
+        subscription.CategoryId = model.CategoryId;
+        subscription.Price = model.Price;
+        subscription.BillingPeriod = model.BillingPeriod;
+        subscription.StartDate = model.StartDate;
+        subscription.NextPaymentDate = model.NextPaymentDate;
+        subscription.IsActive = model.IsActive;
+        subscription.Description = model.Description?.Trim();
     }
 
     private async Task PopulateCategoriesAsync(SubscriptionFormViewModel model)

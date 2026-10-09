@@ -1,0 +1,44 @@
+@using System.Globalization
+@model SubscriptionDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+    var tr = CultureInfo.GetCultureInfo("tr-TR");
+}
+
+<h1 class="h3 mb-4">@Model.Name</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.CategoryName)</dt>
+    <dd class="col-sm-9">@Model.CategoryName</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Price)</dt>
+    <dd class="col-sm-9">@Model.Price.ToString("N2", tr) ₺</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.BillingPeriod)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.BillingPeriod)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.StartDate)</dt>
+    <dd class="col-sm-9">@Model.StartDate.ToString("dd.MM.yyyy")</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.NextPaymentDate)</dt>
+    <dd class="col-sm-9">@Model.NextPaymentDate.ToString("dd.MM.yyyy")</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsActive)</dt>
+    <dd class="col-sm-9">
+        @if (Model.IsActive)
+        {
+            <span class="badge bg-success">Aktif</span>
+        }
+        else
+        {
+            <span class="badge bg-secondary">Pasif</span>
+        }
+    </dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Description) ? "-" : Model.Description)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Düzenle</a>
+<a asp-action="Index" class="btn btn-outline-secondary">Listeye Dön</a>
