@@ -1,22 +1,170 @@
-<ul class="navbar-nav">
+
+<ul class="navbar-nav align-items-lg-center">
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <li class="nav-item">
-            <span class="navbar-text me-3">@User.Identity.Name</span>
-        </li>
-        <li class="nav-item">
-            <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="nav-link btn btn-link">Çıkış</button>
-            </form>
+        <li class="nav-item dropdown">
+            <button class="btn account-menu-trigger dropdown-toggle"
+                    type="button"
+                    id="accountMenu"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+                <span class="account-menu-left">
+                    <span class="account-avatar" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="20" height="20"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 21a8 8 0 0 1 16 0"></path>
+                        </svg>
+                    </span>
+
+                    <span class="account-menu-text">
+                        Hesabım
+                    </span>
+                </span>
+
+                <svg class="account-chevron"
+                     width="18" height="18"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+                    <path d="m6 9 6 6 6-6"></path>
+                </svg>
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end account-dropdown shadow"
+                aria-labelledby="accountMenu">
+
+                <li class="account-dropdown-header">
+                    <div class="fw-semibold">Hesabım</div>
+                    <div class="account-email">
+                        @User.Identity?.Name
+                    </div>
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+
+                <li>
+                    <a class="dropdown-item account-dropdown-item"
+                       asp-controller="AccountSettings"
+                       asp-action="Index">
+                        <svg width="19" height="19"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8"></path>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06A1.65 1.65 0 0 0 16 18.4a1.65 1.65 0 0 0-1 1.5V20h-3v-.1a1.65 1.65 0 0 0-1-1.5 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.6 15a1.65 1.65 0 0 0-1.5-1H6v-3h.1a1.65 1.65 0 0 0 1.5-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06A1.65 1.65 0 0 0 11 6.6a1.65 1.65 0 0 0 1-1.5V5h3v.1a1.65 1.65 0 0 0 1 1.5 1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10a1.65 1.65 0 0 0 1.5 1h.1v3h-.1a1.65 1.65 0 0 0-1.5 1z"></path>
+                        </svg>
+                        Hesap Ayarları
+                    </a>
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+
+                <li>
+                    <button type="button"
+                            class="dropdown-item account-dropdown-item text-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#logoutConfirmModal">
+                        <svg width="19" height="19"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <path d="m16 17 5-5-5-5"></path>
+                            <path d="M21 12H9"></path>
+                        </svg>
+                        Çıkış Yap
+                    </button>
+                </li>
+            </ul>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
+            <a class="nav-link"
+               asp-controller="Account"
+               asp-action="Register">
+                Kayıt Ol
+            </a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Giriş Yap</a>
+            <a class="btn btn-primary btn-sm"
+               asp-controller="Account"
+               asp-action="Login">
+                Giriş Yap
+            </a>
         </li>
     }
 </ul>
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="modal fade"
+         id="logoutConfirmModal"
+         tabindex="-1"
+         aria-labelledby="logoutConfirmTitle"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        id="logoutConfirmTitle">
+                        Çıkış Onayı
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Kapat">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    Çıkış yapmak istediğine emin misin?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        İptal
+                    </button>
+
+                    <form asp-controller="Account"
+                          asp-action="Logout"
+                          method="post"
+                          class="m-0">
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            Evet, Çıkış Yap
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

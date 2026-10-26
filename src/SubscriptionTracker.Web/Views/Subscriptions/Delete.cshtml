@@ -1,0 +1,33 @@
+@using System.Globalization
+@model SubscriptionDetailsViewModel
+
+@{
+    ViewData["Title"] = "Aboneliği Sil";
+    var tr = CultureInfo.GetCultureInfo("tr-TR");
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h1 class="h3 mb-3">Aboneliği Sil</h1>
+
+        <div class="alert alert-warning">
+            <strong>@Model.Name</strong> aboneliğini silmek istediğine emin misin? Bu işlem geri alınamaz.
+        </div>
+
+        <dl class="row">
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.CategoryName)</dt>
+            <dd class="col-sm-8">@Model.CategoryName</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Price)</dt>
+            <dd class="col-sm-8">@Model.Price.ToString("N2", tr) ₺ (@Html.DisplayFor(m => m.BillingPeriod))</dd>
+
+            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.NextPaymentDate)</dt>
+            <dd class="col-sm-8">@Model.NextPaymentDate.ToString("dd.MM.yyyy")</dd>
+        </dl>
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-danger">Evet, Sil</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Vazgeç</a>
+        </form>
+    </div>
+</div>

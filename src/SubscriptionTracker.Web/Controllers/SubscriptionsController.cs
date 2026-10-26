@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SubscriptionTracker.Web.Data;
 using SubscriptionTracker.Web.Models;
 using SubscriptionTracker.Web.ViewModels;
+using SubscriptionTracker.Web.Extensions;
 
 namespace SubscriptionTracker.Web.Controllers;
 
@@ -19,14 +20,39 @@ public class SubscriptionsController : Controller
         _context = context;
     }
 
-    private string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-    public async Task<IActionResult> Index()
+    private string CurrentUserId => User.GetUserId();
+    public async Task<IActionResult> Index(string? search, int? categoryId, bool? isActive, BillingPeriod? billingPeriod)
     {
-        var userId = CurrentUserId;
+       var userId = CurrentUserId;
 
-        var subscriptions = await _context.Subscriptions
-            .Where(s => s.UserId == userId)
+       var query = _context.Subscriptions.Where(s => s.UserId == userId);
+
+       if (!string.IsNullOrWhiteSpace(search))
+       {
+           var term = search.Trim();
+           query = query.Where(s => s.Name.Contains(term));
+       }
+
+       if (categoryId.HasValue)
+          query = query.Where(s => s.CategoryId == categoryId.Value);
+
+       if (isActive.HasValue)
+          query = query.Where(s => s.IsActive == isActive.Value);
+
+       if (billingPeriod.HasValue)
+          query = query.Where(s => s.BillingPeriod == billingPeriod.Value);
+
+       var model = new SubscriptionIndexViewModel
+       {
+          Search = search,
+          CategoryId = categoryId,
+          IsActive = isActive,
+          BillingPeriod = billingPeriod,
+          Categories = await _context.Categories
+            .OrderBy(c => c.Name)
+            .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
+            .ToListAsync(),
+          Items = await query
             .OrderBy(s => s.NextPaymentDate)
             .Select(s => new SubscriptionListItemViewModel
             {
@@ -38,31 +64,14 @@ public class SubscriptionsController : Controller
                 NextPaymentDate = s.NextPaymentDate,
                 IsActive = s.IsActive
             })
-            .ToListAsync();
+            .ToListAsync()
+        };
 
-        return View(subscriptions);
+      return View(model);
     }
-
     public async Task<IActionResult> Details(int id)
     {
-        var userId = CurrentUserId;
-
-        var model = await _context.Subscriptions
-            .Where(s => s.Id == id && s.UserId == userId)
-            .Select(s => new SubscriptionDetailsViewModel
-            {
-                Id = s.Id,
-                Name = s.Name,
-                CategoryName = s.Category.Name,
-                Price = s.Price,
-                BillingPeriod = s.BillingPeriod,
-                StartDate = s.StartDate,
-                NextPaymentDate = s.NextPaymentDate,
-                IsActive = s.IsActive,
-                Description = s.Description
-            })
-            .FirstOrDefaultAsync();
-
+        var model = await GetDetailsAsync(id);
         if (model is null)
             return NotFound();
 
@@ -150,6 +159,52 @@ public class SubscriptionsController : Controller
 
         TempData["SuccessMessage"] = "Abonelik güncellendi.";
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var model = await GetDetailsAsync(id);
+        if (model is null)
+            return NotFound();
+
+        return View(model);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var subscription = await FindOwnedAsync(id);
+        if (subscription is null)
+            return NotFound();
+
+        _context.Subscriptions.Remove(subscription);
+        await _context.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Abonelik silindi.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<SubscriptionDetailsViewModel?> GetDetailsAsync(int id)
+    {
+        var userId = CurrentUserId;
+
+        return await _context.Subscriptions
+            .Where(s => s.Id == id && s.UserId == userId)
+            .Select(s => new SubscriptionDetailsViewModel
+            {
+                Id = s.Id,
+                Name = s.Name,
+                CategoryName = s.Category.Name,
+                Price = s.Price,
+                BillingPeriod = s.BillingPeriod,
+                StartDate = s.StartDate,
+                NextPaymentDate = s.NextPaymentDate,
+                IsActive = s.IsActive,
+                Description = s.Description
+            })
+            .FirstOrDefaultAsync();
     }
 
     private async Task<Subscription?> FindOwnedAsync(int id)

@@ -1,5 +1,5 @@
 @using System.Globalization
-@model IEnumerable<SubscriptionListItemViewModel>
+@model SubscriptionIndexViewModel
 
 @{
     ViewData["Title"] = "Aboneliklerim";
@@ -16,9 +16,45 @@
     <div class="alert alert-success">@message</div>
 }
 
-@if (!Model.Any())
+<form asp-action="Index" method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+        <input asp-for="Search" class="form-control" placeholder="Abonelik ara..." />
+    </div>
+    <div class="col-md-2">
+        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
+            <option value="">Tüm kategoriler</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="isActive" class="form-select">
+            <option value="">Tüm durumlar</option>
+            <option value="true" selected="@(Model.IsActive == true)">Aktif</option>
+            <option value="false" selected="@(Model.IsActive == false)">Pasif</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="billingPeriod" class="form-select">
+            <option value="">Tüm periyotlar</option>
+            <option value="1" selected="@(Model.BillingPeriod == BillingPeriod.Monthly)">Aylık</option>
+            <option value="2" selected="@(Model.BillingPeriod == BillingPeriod.Yearly)">Yıllık</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-outline-primary">Filtrele</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
+    </div>
+</form>
+
+@if (!Model.Items.Any())
 {
-    <div class="alert alert-info">Henüz bir aboneliğin yok. "Yeni Abonelik" ile ilkini ekleyebilirsin.</div>
+    if (Model.HasFilters)
+    {
+        <div class="alert alert-info">Seçtiğin filtrelere uygun abonelik bulunamadı.</div>
+    }
+    else
+    {
+        <div class="alert alert-info">Henüz bir aboneliğin yok. "Yeni Abonelik" ile ilkini ekleyebilirsin.</div>
+    }
 }
 else
 {
@@ -36,7 +72,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Items)
                 {
                     <tr>
                         <td>@item.Name</td>
@@ -57,6 +93,7 @@ else
                         <td class="text-end">
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Detay</a>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Sil</a>
                         </td>
                     </tr>
                 }

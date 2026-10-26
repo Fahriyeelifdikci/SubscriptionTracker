@@ -1,25 +1,85 @@
-﻿@model ErrorViewModel
+﻿
+@model ErrorViewModel
+
 @{
-    ViewData["Title"] = "Error";
+    var statusCode = ViewData["StatusCode"] is int code
+        ? code
+        : 500;
+
+    var isNotFound = statusCode == 404;
+
+    ViewData["Title"] = isNotFound
+        ? "Sayfa Bulunamadı"
+        : "Bir Sorun Oluştu";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-5">
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+                    <div class="display-1 mb-3">
+                        @(isNotFound ? "🔍" : "⚠️")
+                    </div>
+
+                    <h1 class="h3 fw-bold mb-3">
+                        @(isNotFound
+                            ? "Sayfa Bulunamadı"
+                            : "Bir Sorun Oluştu")
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        @if (isNotFound)
+                        {
+                            <text>
+                                Aradığın sayfa bulunamadı.
+                                Adresi kontrol edebilir veya
+                                ana sayfaya dönebilirsin.
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                İşlemin gerçekleştirilirken
+                                bir sorun oluştu.
+                                Lütfen tekrar dene.
+                            </text>
+                        }
+                    </p>
+
+                    <div class="d-flex flex-wrap
+                                justify-content-center gap-2">
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-controller="Dashboard"
+                               asp-action="Index"
+                               class="btn btn-primary">
+                                Panele Dön
+                            </a>
+                        }
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Ana Sayfa
+                        </a>
+
+                    </div>
+
+                    @if (Model?.ShowRequestId == true)
+                    {
+                        <p class="text-muted small mt-4 mb-0">
+                            Hata referansı:
+                            <code>@Model.RequestId</code>
+                        </p>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
