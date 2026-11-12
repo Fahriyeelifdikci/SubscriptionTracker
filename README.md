@@ -18,13 +18,25 @@ Düzenli ödemelerinizi (Netflix, Spotify, faturalar, spor salonu üyeliği vb.)
 
 ## 📸 Ekran Görüntüleri
 
-| Giriş | Abonelikler |
-|:---:|:---:|
-| ![Giriş](docs/screenshots/login.png) | ![Abonelikler](docs/screenshots/subscriptions.png) |
+<table>
+  <tr>
+    <th width="50%">Abonelikler</th>
+    <th width="50%">Bütçe Yönetimi</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/subscriptions.png" width="100%"></td>
+    <td><img src="docs/screenshots/budget.png" width="100%"></td>
+  </tr>
+  <tr>
+    <th>Giriş</th>
+    <th>Kayıt</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/login.png" width="100%"></td>
+    <td><img src="docs/screenshots/register.png" width="100%"></td>
+  </tr>
+</table>
 
-| Bütçe Yönetimi | Hesap Ayarları |
-|:---:|:---:|
-| ![Bütçe](docs/screenshots/budget.png) | ![Hesap Ayarları](docs/screenshots/account.png) |
 
 ## 🛠️ Kullanılan Teknolojiler
 
