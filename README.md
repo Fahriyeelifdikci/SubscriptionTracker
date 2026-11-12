@@ -1,106 +1,117 @@
-# Subscription Tracker
+# 💳 Subscription Tracker
 
-A web-based subscription management application built with ASP.NET Core MVC, designed to help users track recurring payments, manage monthly budgets, and visualize subscription expenses.
+Düzenli ödemelerinizi (Netflix, Spotify, faturalar, spor salonu üyeliği vb.) tek bir yerden takip etmenizi, aylık bütçenizi yönetmenizi ve harcamalarınızı grafiklerle görmenizi sağlayan, **ASP.NET Core MVC** ile geliştirilmiş bir web uygulaması.
 
-## Features
+![Dashboard](docs/screenshots/dashboard.png)
 
-- **User Authentication:** Secure registration, login, and logout using ASP.NET Core Identity.
-- **Subscription Management:** Add, view, edit, and delete subscriptions.
-- **Dashboard:** View monthly and yearly subscription costs.
-- **Budget Management:** Set a monthly spending limit and receive warnings when approaching or exceeding it.
-- **Payment Tracking:** Monitor upcoming subscription payments.
-- **Expense Visualization:** Interactive charts showing category-based spending and estimated expenses for the next six months.
-- **Account Settings:** View account information and securely change passwords.
-- **Responsive Design:** User-friendly interface built with Bootstrap.
-- **Error Handling:** Custom error pages for invalid routes and unexpected errors.
+## ✨ Özellikler
 
-## Technologies Used
+- **Kullanıcı Hesapları:** ASP.NET Core Identity ile güvenli kayıt, giriş ve çıkış. Her kullanıcı yalnızca kendi verilerini görür.
+- **Abonelik Yönetimi:** Abonelik ekleme, görüntüleme, düzenleme ve silme (ad, kategori, ücret, aylık/yıllık periyot, ödeme tarihi, aktif/pasif durumu, not).
+- **Filtreleme ve Arama:** Abonelikleri ada, kategoriye ve duruma göre filtreleme.
+- **Dashboard:** Aylık ve yıllık toplam gider, aktif abonelik sayısı ve yaklaşan ödemeler. Yıllık abonelikler aylık maliyete çevrilerek hesaplanır.
+- **Bütçe Yönetimi:** Aylık harcama limiti belirleme; limitin %90'ına yaklaşıldığında ve aşıldığında uyarı.
+- **Grafikler:** Kategori bazlı harcama dağılımı ve önümüzdeki 6 ayın tahmini harcamaları (Chart.js).
+- **Hesap Ayarları:** Hesap bilgilerini görüntüleme ve şifre değiştirme.
+- **Hata Yönetimi:** Geçersiz sayfalar ve beklenmeyen hatalar için özel hata sayfaları.
+- **Responsive Tasarım:** Bootstrap ile mobil uyumlu arayüz.
 
-| Technology | Purpose |
+## 📸 Ekran Görüntüleri
+
+| Giriş | Abonelikler |
+|:---:|:---:|
+| ![Giriş](docs/screenshots/login.png) | ![Abonelikler](docs/screenshots/subscriptions.png) |
+
+| Bütçe Yönetimi | Hesap Ayarları |
+|:---:|:---:|
+| ![Bütçe](docs/screenshots/budget.png) | ![Hesap Ayarları](docs/screenshots/account.png) |
+
+## 🛠️ Kullanılan Teknolojiler
+
+| Teknoloji | Kullanım Amacı |
 |---|---|
-| C# / .NET 10 | Backend development |
-| ASP.NET Core MVC | Web application architecture |
-| Entity Framework Core | Database operations |
-| SQL Server | Data storage |
-| ASP.NET Core Identity | Authentication and account management |
-| Razor Views | Server-rendered user interface |
-| Bootstrap | Responsive design |
-| Chart.js | Data visualization |
-| Git & GitHub | Version control |
+| C# / .NET 10 | Backend geliştirme |
+| ASP.NET Core MVC | Uygulama mimarisi |
+| Entity Framework Core | Veritabanı işlemleri (Code First, Migration) |
+| SQL Server | Veri depolama |
+| ASP.NET Core Identity | Kimlik doğrulama ve hesap yönetimi |
+| Razor Views | Sunucu taraflı arayüz |
+| Bootstrap | Responsive tasarım |
+| Chart.js | Veri görselleştirme |
+| Git & GitHub | Versiyon kontrolü |
 
-## Getting Started
+## 🚀 Kurulum
 
-### Prerequisites
+### Gereksinimler
 
-- .NET 10 SDK
-- SQL Server or SQL Server Express
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- SQL Server, SQL Server Express veya LocalDB
 - Git
 
-### Installation
+### Adımlar
 
-Clone the repository:
+1. Repoyu klonlayın:
 
-```bash
-git clone https://github.com/Fahriyeelifdikci/SubscriptionTracker.git
-cd SubscriptionTracker
+   ```bash
+   git clone https://github.com/Fahriyeelifdikci/SubscriptionTracker.git
+   cd SubscriptionTracker/src/SubscriptionTracker.Web
+   ```
+
+2. Veritabanı bağlantı cümlesini **User Secrets** ile ayarlayın (gizli bilgiler repoya eklenmez):
+
+   ```bash
+   dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=(localdb)\\MSSQLLocalDB;Database=SubscriptionTrackerDb;Trusted_Connection=True;TrustServerCertificate=True"
+   ```
+
+3. EF Core aracını yükleyin (yüklü değilse) ve migration'ları uygulayın:
+
+   ```bash
+   dotnet tool install --global dotnet-ef
+   dotnet ef database update
+   ```
+
+4. Uygulamayı çalıştırın:
+
+   ```bash
+   dotnet run
+   ```
+
+5. Terminalde görünen yerel adresi tarayıcıda açın.
+
+## 📁 Proje Yapısı
+
 ```
-
-Configure the `DefaultConnection` connection string for your local SQL Server instance. Use .NET user secrets or another secure configuration mechanism for sensitive credentials.
-
-Navigate to the web project:
-
-```bash
-cd src/SubscriptionTracker.Web
-```
-
-Apply database migrations:
-
-```bash
-dotnet ef database update
-```
-
-Run the application:
-
-```bash
-dotnet run
-```
-
-Open the local address shown in the terminal.
-
-## Screenshots
-
-Screenshots of the dashboard, budget management, subscription management, and account settings will be added here.
-
-## Project Structure
-
-```text
 SubscriptionTracker/
 ├── src/
 │   └── SubscriptionTracker.Web/
-│       ├── Controllers/
-│       ├── Data/
-│       ├── Extensions/
-│       ├── Migrations/
-│       ├── Models/
-│       ├── Services/
-│       ├── ViewModels/
-│       ├── Views/
-│       ├── wwwroot/
-│       └── Program.cs
+│       ├── Controllers/     # İstekleri karşılayan controller'lar
+│       ├── Data/            # DbContext ve veritabanı yapılandırması
+│       ├── Extensions/      # Yardımcı extension metotları
+│       ├── Migrations/      # EF Core migration dosyaları
+│       ├── Models/          # Entity sınıfları
+│       ├── Services/        # İş mantığı (ör. maliyet hesaplama)
+│       ├── ViewModels/      # View'lara özel modeller ve validation
+│       ├── Views/           # Razor view'ları
+│       ├── wwwroot/         # CSS, JS ve statik dosyalar
+│       └── Program.cs       # Uygulama başlangıç ve servis kayıtları
+├── docs/screenshots/        # README ekran görüntüleri
 ├── .gitignore
 ├── README.md
 └── SubscriptionTracker.slnx
 ```
 
-## Future Improvements
+## 🔮 Gelecek Planları
 
-- Email reminders for upcoming payments
-- Multi-currency support
-- Exportable expense reports
-- More detailed spending analytics
+- Yaklaşan ödemeler için e-posta hatırlatmaları
+- Çoklu para birimi desteği
+- Harcama raporlarını dışa aktarma (PDF/Excel)
+- Daha detaylı harcama analizleri
 
-## Purpose
+## 🎯 Projenin Amacı
 
-This project was developed to strengthen practical skills in ASP.NET Core MVC, database design, user authentication, and full-stack web development.
+Bu proje; ASP.NET Core MVC, veritabanı tasarımı, kullanıcı kimlik doğrulama ve full-stack web geliştirme konularında pratik deneyim kazanmak amacıyla geliştirilmiştir.
 
-It demonstrates how recurring subscription information can be organized into a simple and accessible financial tracking application.
+## 👩‍💻 Geliştirici
+
+**Fahriye Elif Dikci**
+[GitHub](https://github.com/Fahriyeelifdikci)
