@@ -56,6 +56,13 @@ Düzenli ödemelerinizi (Netflix, Spotify, faturalar, spor salonu üyeliği vb.)
 
 ## 🚀 Kurulum
 
+## 🧪 Testler
+
+Maliyet hesaplama (aylık/yıllık dönüşüm) ve bütçe mantığı (kullanım yüzdesi, kalan bütçe, sıfır/boş bütçe gibi uç durumlar) xUnit ile test edilir. Testler veritabanı gerektirmez ve her push'ta GitHub Actions üzerinde otomatik çalışır.
+
+```bash
+dotnet test
+```
 ### Gereksinimler
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
@@ -113,6 +120,11 @@ SubscriptionTracker/
 ├── README.md
 └── SubscriptionTracker.slnx
 ```
+## ⚠️ Bilinen Sınırlamalar
+
+- Ödeme tarihi geçen aboneliklerin "sonraki ödeme tarihi" otomatik olarak ileri alınmaz, kullanıcı tarafından güncellenmesi gerekir.
+- Tüm tutarlar tek para birimi (₺) üzerinden hesaplanır.
+- Testler şu an iş mantığını kapsıyor; controller ve veritabanı katmanı için entegrasyon testi bulunmuyor.
 
 ## 🔮 Gelecek Planları
 
@@ -129,3 +141,7 @@ Bu proje; ASP.NET Core MVC, veritabanı tasarımı, kullanıcı kimlik doğrulam
 
 **Fahriye Elif Dikci**
 [GitHub](https://github.com/Fahriyeelifdikci)
+
+## 📄 Lisans
+
+Bu proje [MIT lisansı](LICENSE) ile lisanslanmıştır.
