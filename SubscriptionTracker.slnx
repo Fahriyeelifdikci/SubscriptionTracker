@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/SubscriptionTracker.Web/SubscriptionTracker.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SubscriptionTracker.Tests/SubscriptionTracker.Tests.csproj" />
+  </Folder>
 </Solution>
