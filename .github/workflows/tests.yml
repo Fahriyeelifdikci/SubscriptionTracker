@@ -1,0 +1,13 @@
+name: tests
+
+on: [push, pull_request]              # her push'ta ve PR'da tetiklenir
+
+jobs:
+  test:
+    runs-on: ubuntu-latest            # GitHub'ın verdiği temiz Linux makinesi
+    steps:
+      - uses: actions/checkout@v4     # repoyu makineye indir
+      - uses: actions/setup-dotnet@v4 # .NET SDK kur
+        with:
+          dotnet-version: "10.0.x"    # 10'un en güncel yaması
+      - run: dotnet test SubscriptionTracker.slnx

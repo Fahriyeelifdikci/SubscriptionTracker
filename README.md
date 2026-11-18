@@ -1,5 +1,7 @@
 # 💳 Subscription Tracker
 
+![tests](https://github.com/Fahriyeelifdikci/SubscriptionTracker/actions/workflows/tests.yml/badge.svg)
+
 Düzenli ödemelerinizi (Netflix, Spotify, faturalar, spor salonu üyeliği vb.) tek bir yerden takip etmenizi, aylık bütçenizi yönetmenizi ve harcamalarınızı grafiklerle görmenizi sağlayan, **ASP.NET Core MVC** ile geliştirilmiş bir web uygulaması.
 
 ![Dashboard](docs/screenshots/dashboard.png)
